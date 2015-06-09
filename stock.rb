@@ -50,7 +50,8 @@ def get_stock_csv( year, month, day )
 end
 
 
-def sqrape_stocks( data, company, update_flag )
+#一度のスクレイピングで複数の会社のデータを取り込む
+def sqrape_stocks_with_list( data, companyList, update_flag )
 	
 	schedule = Schedule.new("2014/2/1", "2014/2/10")
 
@@ -70,19 +71,25 @@ def sqrape_stocks( data, company, update_flag )
 				
 				if csv != nil then
 					for row in csv
-						#puts row[ 2 ].to_s.encode( "UTF-8", "Shift_JIS" )
-						if row[ 2 ].to_s.encode( "UTF-8", "Shift_JIS" ) == \
-						company.encode( "UTF-8" ) then
+						#社名を取り出す
+						for company in companyList
 							
-							#when hashtable already have data
-							if data.key?(current_date.to_s) == true and update_flag == false
-								puts "data is already exist, go to next"
-								next
+							
+							company = company.chomp
+							
+							if row[ 2 ].to_s.encode( "UTF-8", "Shift_JIS" ) == \
+							company.encode( "UTF-8" ) then
+								
+								#when hashtable already have data
+								if data.key?(current_date.to_s) == true and update_flag == false
+									puts "data is already exist, go to next"
+									next
+								end
+								
+								data[ current_date.to_s ] = row[ 7 ].to_s.encode( "UTF-8", "Shift_JIS" )
+								io1.puts ( current_date.to_s + "," +  row[ 7 ].to_s.encode( "UTF-8", "Shift_JIS" 	
+								#7 終値
 							end
-							
-							data[ current_date.to_s ] = row[ 7 ].to_s.encode( "UTF-8", "Shift_JIS" )
-							io1.puts ( current_date.to_s + "," +  row[ 7 ].to_s.encode( "UTF-8", "Shift_JIS" ) )	
-							#7 終値
 						end
 					end
 				end
